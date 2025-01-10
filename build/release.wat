@@ -1,10 +1,10 @@
 (module
  (type $0 (func))
- (type $1 (func (param i32)))
- (type $2 (func (param i32 i32) (result i32)))
- (type $3 (func (param i32 i32)))
- (import "fluentbase_v1preview" "_exit" (func $assembly/index/_exit (param i32)))
+ (type $1 (func (param i32 i32) (result i32)))
+ (type $2 (func (param i32 i32)))
+ (type $3 (func (param i32)))
  (import "fluentbase_v1preview" "_write" (func $assembly/index/_writeOutput (param i32 i32)))
+ (import "fluentbase_v1preview" "_exit" (func $assembly/index/_exit (param i32)))
  (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
  (memory $0 1)
  (data $0 (i32.const 1036) "\1c")
@@ -25,20 +25,11 @@
  (data $7.1 (i32.const 1448) "\02\00\00\00\1c\00\00\00I\00n\00v\00a\00l\00i\00d\00 \00l\00e\00n\00g\00t\00h")
  (data $8 (i32.const 1484) "<")
  (data $8.1 (i32.const 1496) "\02\00\00\00&\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
- (data $10 (i32.const 1564) "\1c")
- (data $10.1 (i32.const 1576) "\02\00\00\00\02\00\00\00h")
- (data $11 (i32.const 1596) "\1c")
- (data $11.1 (i32.const 1608) "\02\00\00\00\02\00\00\00e")
- (data $12 (i32.const 1628) "\1c")
- (data $12.1 (i32.const 1640) "\02\00\00\00\02\00\00\00l")
  (export "deploy" (func $assembly/index/deploy))
  (export "main" (func $assembly/index/main))
- (export "main2" (func $assembly/index/main2))
  (export "memory" (memory $0))
  (start $~start)
  (func $assembly/index/deploy
-  i32.const 0
-  call $assembly/index/_exit
  )
  (func $~lib/rt/stub/__new (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
@@ -527,51 +518,8 @@
   i32.const 3
   call $assembly/index/_writeOutput
  )
- (func $assembly/index/main2
-  i32.const 1552
-  i32.const 1580
-  i32.load
-  i32.const 1
-  i32.shr_u
-  if (result i32)
-   i32.const 1584
-   i32.load16_u
-  else
-   i32.const -1
-  end
-  i32.store8
-  i32.const 1552
-  i32.const 1612
-  i32.load
-  i32.const 1
-  i32.shr_u
-  if (result i32)
-   i32.const 1616
-   i32.load16_u
-  else
-   i32.const -1
-  end
-  i32.store8
-  i32.const 1552
-  i32.const 1644
-  i32.load
-  i32.const 1
-  i32.shr_u
-  if (result i32)
-   i32.const 1648
-   i32.load16_u
-  else
-   i32.const -1
-  end
-  i32.store8
-  i32.const 1552
-  i32.const 3
-  call $assembly/index/_writeOutput
-  i32.const 0
-  call $assembly/index/_exit
- )
  (func $~start
-  i32.const 1660
+  i32.const 1548
   global.set $~lib/rt/stub/offset
  )
 )

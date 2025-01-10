@@ -165,19 +165,19 @@ function storage(slot: Uint8Array): Uint8Array {
 }
 
 export function deploy(): void {
-  _exit(0);
 }
 
 export function main(): void {
   new Uint8Array(3);
   _writeOutput(0, 3);
+
 }
 
-export function main2(): void {
-  let ptr: u32 = memory.data(3) as u32;
-  store<u8>(ptr, 'h'.charCodeAt(0) as u8);
-  store<u8>(ptr, 'e'.charCodeAt(0) as u8);
-  store<u8>(ptr, 'l'.charCodeAt(0) as u8);
-  _writeOutput(ptr, 3);
-  _exit(0);
-}
+// export function main(): void {
+//   let ptr: u32 = memory.data(3) as u32;
+//   store<u8>(ptr, 'h'.charCodeAt(0) as u8);
+//   store<u8>(ptr, 'e'.charCodeAt(0) as u8);
+//   store<u8>(ptr, 'l'.charCodeAt(0) as u8);
+//   _writeOutput(ptr, 3);
+//   _exit(0);
+// }
