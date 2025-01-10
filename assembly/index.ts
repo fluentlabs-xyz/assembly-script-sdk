@@ -59,7 +59,8 @@ class ExecResult {
 
 }
 function exec(codeHash: Uint8Array, input: Uint8Array, gasLimit: u64, state: u32): ExecResult {
-  let gasLimitPtr: usize = changetype<usize>(memory.data(8));
+  // let gasLimitPtr: usize = changetype<usize>(memory.data(8));
+  let gasLimitPtr: usize = 0 // TODO: fix
   store<u64>(gasLimitPtr, gasLimit);
   const exitCode = _exec(codeHash.dataStart, input.dataStart, input.length, gasLimitPtr, state);
   let gasUsed: u64 = load<u64>(gasLimitPtr);
@@ -164,13 +165,19 @@ function storage(slot: Uint8Array): Uint8Array {
 }
 
 export function deploy(): void {
-  // that is deployment stage (aka constructor)
+  _exit(0);
 }
 
 export function main(): void {
-  const helloBuf = new Uint8Array(3);
-  helloBuf[0] = 'h'.charCodeAt(0);
-  helloBuf[1] = 'e'.charCodeAt(0);
-  helloBuf[2] = 'l'.charCodeAt(0);
-  writeOutput(helloBuf);
+  new Uint8Array(3);
+  _writeOutput(0, 3);
+}
+
+export function main2(): void {
+  let ptr: u32 = memory.data(3) as u32;
+  store<u8>(ptr, 'h'.charCodeAt(0) as u8);
+  store<u8>(ptr, 'e'.charCodeAt(0) as u8);
+  store<u8>(ptr, 'l'.charCodeAt(0) as u8);
+  _writeOutput(ptr, 3);
+  _exit(0);
 }
