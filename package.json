@@ -2,22 +2,14 @@
   "name": "assembly-script-sdk",
   "version": "1.0.0",
   "description": "An SDK for developing smart contracts on the Fluent blockchain, written in AssemblyScript",
-  "main": "index.js",
-  "scripts": {
-    "test": "node tests",
-    "start": "npx serve .",
-    "build": "asc src/index.ts --use abort=src/index/_abort --target release"
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "assemblyscript": "^0.27.31"
   },
   "type": "module",
-  "exports": {
-    ".": {
-      "import": "./build/release.js",
-      "types": "./build/release.d.ts"
-    }
+  "bin": {
+    "compile": "./cli/index.js"
   }
+
 }
