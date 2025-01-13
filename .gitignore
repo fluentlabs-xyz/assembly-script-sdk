@@ -1,5 +1,2 @@
 node_modules/
-build/debug*
-build/release.js
-build/release.wasm.map
-build/release.d.ts
+build
