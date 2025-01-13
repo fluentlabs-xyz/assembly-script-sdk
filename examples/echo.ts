@@ -5,6 +5,7 @@ export function deploy(): void {
 
 export function main(): void {
     const sdk = new SDK();
-    const size = sdk.inputSize();
-    sdk.writeOutputString("input_size=" + size.toString());
+    const inputBuf = sdk.readInput();
+    const str = String.UTF8.decode(inputBuf.buffer);
+    sdk.writeOutputString("INPUT: \"" + str + "\"");
 }

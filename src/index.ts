@@ -1,14 +1,19 @@
+const FLUENT_HEADER_SIZE = 380
+
 export class SDK {
   constructor() {
 
   }
+  exit(code: i32): void {
+    _exit(code);
+  }
   inputSize(): u32 {
-    return _inputSize();
+    return _inputSize() - FLUENT_HEADER_SIZE;
   }
   readInput(): Uint8Array {
     const size = this.inputSize();
     const buffer = new Uint8Array(size);
-    _readInput(buffer.dataStart, 0, size);
+    _readInput(buffer.dataStart, FLUENT_HEADER_SIZE, size);
     return buffer;
   }
   readOutput(): Uint8Array {
@@ -23,11 +28,6 @@ export class SDK {
   writeOutputString(str: string): void {
     const buffer = Uint8Array.wrap(String.UTF8.encode(str, false));
     this.writeOutput(buffer);
-  }
-  panic(reason: string): void {
-    const buffer = Uint8Array.wrap(String.UTF8.encode(reason, false));
-    this.writeOutput(buffer);
-    _exit(-71);
   }
   exec(codeHash: Uint8Array, input: Uint8Array, gasLimit: u64, state: u32): ExecResult {
     let gasLimitPtr: usize = 0 // TODO: fix
@@ -82,10 +82,9 @@ export class SDK {
     bytesArray[29] = 0x22;
     bytesArray[30] = 0x55;
     bytesArray[31] = 0xb9;
-
     const execResult = this.exec(bytesArray, input, 22_100, 0);
     if (execResult.exitCode != 0) {
-      this.panic("exit code of exec during storage write is not 0");
+      throw new Error("execution failed during storage write: exit code is not 0");
     }
 
   }
@@ -128,7 +127,7 @@ export class SDK {
     bytesArray[31] = 0x27;
     let execResult = this.exec(bytesArray, slot, 2100, 0);
     if (execResult.exitCode != 0) {
-      this.panic("exit code of exec during storage read is not 0");
+      throw new Error("execution failed during storage read: exit code is not 0");
     }
     let output = this.readOutput();
     return output;
