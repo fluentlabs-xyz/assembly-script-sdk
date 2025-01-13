@@ -30,10 +30,10 @@ export class SDK {
     this.writeOutput(buffer);
   }
   exec(codeHash: Uint8Array, input: Uint8Array, gasLimit: u64, state: u32): ExecResult {
-    let gasLimitPtr: usize = 0 // TODO: fix
+    let gasLimitPtr: usize = (new Uint64Array(1)).dataStart;
     store<u64>(gasLimitPtr, gasLimit);
     const exitCode = _exec(codeHash.dataStart, input.dataStart, input.length, gasLimitPtr, state);
-    let gasUsed: u64 = load<u64>(gasLimitPtr);
+    let gasUsed: u32 = load<u64>(gasLimitPtr) as u32;
     return { exitCode, gasUsed };
   }
   keccak256(data: Uint8Array): Uint8Array {
@@ -86,10 +86,9 @@ export class SDK {
     if (execResult.exitCode != 0) {
       throw new Error("execution failed during storage write: exit code is not 0");
     }
-
   }
 
-  storage(slot: Uint8Array): Uint8Array {
+  readStorage(slot: Uint8Array): Uint8Array {
     // pub const SYSCALL_ID_STORAGE_READ: B256 =
     // b256!("4023096842131de08903e3a03a648b5a91209ca2a264e0a3a90f9899431ad227"); // keccak256("_syscall_storage_read")
     let bytesArray = new Uint8Array(32);
