@@ -1,4 +1,4 @@
-To build wasm file use this command:
+To build example
 ```bash
-npx asc assembly/index.ts --use abort=assembly/index/_abort --target release
+npx compile examples/echo.ts
 ```
