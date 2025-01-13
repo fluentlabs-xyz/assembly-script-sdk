@@ -1,37 +1,77 @@
+
+class SDK {
+
+}
+// @ts-ignore
 @external("fluentbase_v1preview", "_input_size")
-declare function _input_size(): u32
+declare function _inputSize(): u32;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_output_size")
-declare function _outputSize(): u32
+declare function _outputSize(): u32;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_read")
-declare function _readInput(target_ptr: usize, offset: usize, length: usize): void
+declare function _readInput(
+  destinationPtr: usize, // Pointer to the destination buffer
+  dataOffset: u32,       // Offset within the input data
+  dataLength: u32        // Length of data to read
+): void;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_exec")
-declare function _exec(hash32_ptr: usize, input_ptr: usize, input_len: usize, fuel_ptr: usize,state: u32): i32
+declare function _exec(
+  hashPtr: usize,        // Pointer to the 32-byte hash
+  inputPtr: usize,       // Pointer to the input buffer
+  inputLength: u32,      // Length of the input buffer
+  fuelPtr: usize,        // Pointer to the fuel value
+  stateValue: u32        // State flag or value
+): i32;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_read_output")
-declare function _readOutput(target_ptr: usize, offset: usize, length: usize): void
+declare function _readOutput(
+  destinationPtr: usize, // Pointer to the destination buffer
+  dataOffset: u32,       // Offset within the output data
+  dataLength: u32        // Length of data to read
+): void;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_keccak256")
-declare function _keccak256(data_offset: usize, data_len: usize, output32_offset: usize): void
+declare function _keccak256(
+  inputDataPtr: usize,   // Pointer to the input data
+  inputDataLength: u32,  // Length of the input data
+  outputHashPtr: usize   // Pointer to the output buffer (32 bytes)
+): void;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_exit")
-declare function _exit(code: i32): void
+declare function _exit(exitCode: i32): void;
+
+// @ts-ignore
 @external("fluentbase_v1preview", "_write")
-declare function _writeOutput(string_ptr: u32, length: u32): void
+declare function _writeOutput(
+  sourcePtr: usize,      // Pointer to the source data (string)
+  sourceLength: u32      // Length of the source data
+): void;
+
 function _abort(messagePtr: usize, fileNamePtr: usize, line: u32, column: u32): void {
-  let message = ""
+  let i = 0;
   while (true) {
-    let codeUnit = load<u16>(messagePtr); // Load 16-bit (UTF-16) character from memory
-    if (codeUnit == 0) {
+    let unit = load<u16>(messagePtr + i * 2); // Load 16-bit (UTF-16) character from memory
+    if (unit == 0) {
       break;
     }
-    message += String.fromCharCode(codeUnit);
-    messagePtr += 2;
+    i++;
   }
-  const buffer = Uint8Array.wrap(String.UTF8.encode(message, false));
-  writeOutput(buffer)
-  _exit(-71)
+  let message = String.UTF16.decodeUnsafe(messagePtr, i * 2);
+  writeOutputString(message);
+  _exit(-71);
 }
 
 /* SDK */
 function inputSize(): u32 {
-  return _input_size();
+  return _inputSize();
 }
 function readInput(): Uint8Array {
   const size = inputSize();
@@ -46,7 +86,7 @@ function readOutput(): Uint8Array {
   return buffer;
 }
 function writeOutput(buffer: Uint8Array): void {
-  _writeOutput(buffer.dataStart as u32, buffer.byteLength as u32)
+  _writeOutput(buffer.dataStart, buffer.byteLength)
 }
 function panic(reason: string): void {
   const buffer = Uint8Array.wrap(String.UTF8.encode(reason, false));
@@ -56,7 +96,6 @@ function panic(reason: string): void {
 class ExecResult {
   exitCode!: i32;
   gasUsed!: i32;
-
 }
 function exec(codeHash: Uint8Array, input: Uint8Array, gasLimit: u64, state: u32): ExecResult {
   // let gasLimitPtr: usize = changetype<usize>(memory.data(8));
@@ -167,17 +206,19 @@ function storage(slot: Uint8Array): Uint8Array {
 export function deploy(): void {
 }
 
-export function main(): void {
-  new Uint8Array(3);
-  _writeOutput(0, 3);
-
+export function writeOutputString(s: string): void {
+  const buffer = Uint8Array.wrap(String.UTF8.encode(s, false));
+  writeOutput(buffer);
 }
 
-// export function main(): void {
-//   let ptr: u32 = memory.data(3) as u32;
-//   store<u8>(ptr, 'h'.charCodeAt(0) as u8);
-//   store<u8>(ptr, 'e'.charCodeAt(0) as u8);
-//   store<u8>(ptr, 'l'.charCodeAt(0) as u8);
-//   _writeOutput(ptr, 3);
-//   _exit(0);
-// }
+export function main(): void {
+  // const arr = new Uint8Array(3);
+  // arr[0] = 'h'.charCodeAt(0);
+  // const x = 10 / 0;
+  writeOutputString("HELLO");
+}
+
+export function some_func(): void {
+  let ptr: u32 = memory.data(3) as u32;
+  _writeOutput(ptr, 3);
+}
