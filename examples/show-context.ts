@@ -1,10 +1,11 @@
-import { getContext, writeOutput, seed } from "../src/index"
+import { getContext, writeOutput, readInput } from "../src/index"
 
 export function main(): void {
     const context = getContext();
     let message = "caller=" + toHexString(context.contract.caller);
     message += " block=" + context.block.number.toString();
     message += " gasLimit=" + context.tx.gasLimit.toString();
+    message += " input=" + toHexString(readInput());
     const messageBuf = Uint8Array.wrap(String.UTF8.encode(message));
     writeOutput(messageBuf);
 }

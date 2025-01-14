@@ -9,7 +9,8 @@ The **AssemblyScript SDK** is a toolkit for building smart contracts in Assembly
 ```bash
 nvm use 23 # use Node.js v23.6.0 (npm v11.0.0)
 npm install
-npx compile examples/echo.ts # pass arguments to the AssemblyScript compiler
+cd examples/who-am-i
+npx compile examples/simple-storage.ts -o lib.wasm -t lib.wat # arguments are passed to the AssemblyScript compiler
 ```
 
 ### Missing Features
