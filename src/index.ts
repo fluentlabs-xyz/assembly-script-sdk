@@ -1,53 +1,56 @@
-const FLUENT_HEADER_SIZE = 380
+import { FLUENT_HEADER_SIZE } from "./consts"
+import { _exit, _inputSize, _readInput, _outputSize, _writeOutput, _exec, _keccak256, _readOutput } from "./bindings"
+import { getContext } from "./context"
 
-export class SDK {
-  constructor() {
+export * from "./context"
 
-  }
-  exit(code: i32): void {
+export function exit(code: i32): void {
     _exit(code);
-  }
-  inputSize(): u32 {
+}
+
+export function inputSize(): u32 {
     return _inputSize() - FLUENT_HEADER_SIZE;
-  }
-  readInput(): Uint8Array {
-    const size = this.inputSize();
+}
+
+export function readInput(): Uint8Array {
+    const size = inputSize();
     const buffer = new Uint8Array(size);
     _readInput(buffer.dataStart, FLUENT_HEADER_SIZE, size);
     return buffer;
-  }
-  readOutput(): Uint8Array {
+}
+
+export function readOutput(): Uint8Array {
     const size = _outputSize();
     const buffer = new Uint8Array(size);
     _readOutput(buffer.dataStart, 0, size);
     return buffer;
-  }
-  writeOutput(buffer: Uint8Array): void {
+}
+
+export function writeOutput(buffer: Uint8Array): void {
     _writeOutput(buffer.dataStart, buffer.byteLength)
-  }
-  writeOutputString(str: string): void {
-    const buffer = Uint8Array.wrap(String.UTF8.encode(str, false));
-    this.writeOutput(buffer);
-  }
-  exec(codeHash: Uint8Array, input: Uint8Array, gasLimit: u64, state: u32): ExecResult {
+}
+
+export function exec(codeHash: Uint8Array, input: Uint8Array, gasLimit: u64, state: u32): ExecResult {
     let gasLimitPtr: usize = (new Uint64Array(1)).dataStart;
     store<u64>(gasLimitPtr, gasLimit);
     const exitCode = _exec(codeHash.dataStart, input.dataStart, input.length, gasLimitPtr, state);
     let gasUsed: u32 = load<u64>(gasLimitPtr) as u32;
     return { exitCode, gasUsed };
-  }
-  keccak256(data: Uint8Array): Uint8Array {
+}
+
+export function keccak256(data: Uint8Array): Uint8Array {
     const buffer = new Uint8Array(32);
     _keccak256(data.dataStart, data.length, buffer.dataStart);
     return buffer;
-  }
-  writeStorage(slot: Uint8Array, value: Uint8Array): void {
+}
+
+export function writeStorage(slot: Uint8Array, value: Uint8Array): void {
     // pub const SYSCALL_ID_STORAGE_WRITE: B256 =
     // b256!("126659e43fb4baaff19b992a1869aa0cac8ec5e30b38556fd8cf28e6fd2255b9"); // keccak256("_syscall_storage_write")
     let input = new Uint8Array(64);
     for (let i = 0; i < 32; i++) {
-      input[i] = slot[i];
-      input[32 + i] = value[i];
+        input[i] = slot[i];
+        input[32 + i] = value[i];
     }
     let bytesArray = new Uint8Array(32);
     bytesArray[0] = 0x12;
@@ -82,13 +85,13 @@ export class SDK {
     bytesArray[29] = 0x22;
     bytesArray[30] = 0x55;
     bytesArray[31] = 0xb9;
-    const execResult = this.exec(bytesArray, input, 22_100, 0);
+    const execResult = exec(bytesArray, input, 22_100, 0);
     if (execResult.exitCode != 0) {
-      throw new Error("execution failed during storage write: exit code is not 0");
+        throw new Error("execution failed during storage write: exit code is not 0");
     }
-  }
+}
 
-  readStorage(slot: Uint8Array): Uint8Array {
+export function readStorage(slot: Uint8Array): Uint8Array {
     // pub const SYSCALL_ID_STORAGE_READ: B256 =
     // b256!("4023096842131de08903e3a03a648b5a91209ca2a264e0a3a90f9899431ad227"); // keccak256("_syscall_storage_read")
     let bytesArray = new Uint8Array(32);
@@ -124,83 +127,55 @@ export class SDK {
     bytesArray[29] = 0x1a;
     bytesArray[30] = 0xd2;
     bytesArray[31] = 0x27;
-    let execResult = this.exec(bytesArray, slot, 2100, 0);
+    let execResult = exec(bytesArray, slot, 2100, 0);
     if (execResult.exitCode != 0) {
-      throw new Error("execution failed during storage read: exit code is not 0");
+        throw new Error("execution failed during storage read: exit code is not 0");
     }
-    let output = this.readOutput();
+    let output = readOutput();
     return output;
-  }
 }
-// @ts-ignore
-@external("fluentbase_v1preview", "_input_size")
-declare function _inputSize(): u32;
 
-// @ts-ignore
-@external("fluentbase_v1preview", "_output_size")
-declare function _outputSize(): u32;
+export class ExecResult {
+    exitCode!: i32;
+    gasUsed!: i32;
+}
 
-// @ts-ignore
-@external("fluentbase_v1preview", "_read")
-declare function _readInput(
-  destinationPtr: usize, // Pointer to the destination buffer
-  dataOffset: u32,       // Offset within the input data
-  dataLength: u32        // Length of data to read
-): void;
 
-// @ts-ignore
-@external("fluentbase_v1preview", "_exec")
-declare function _exec(
-  hashPtr: usize,        // Pointer to the 32-byte hash
-  inputPtr: usize,       // Pointer to the input buffer
-  inputLength: u32,      // Length of the input buffer
-  fuelPtr: usize,        // Pointer to the fuel value
-  stateValue: u32        // State flag or value
-): i32;
-
-// @ts-ignore
-@external("fluentbase_v1preview", "_read_output")
-declare function _readOutput(
-  destinationPtr: usize, // Pointer to the destination buffer
-  dataOffset: u32,       // Offset within the output data
-  dataLength: u32        // Length of data to read
-): void;
-
-// @ts-ignore
-@external("fluentbase_v1preview", "_keccak256")
-declare function _keccak256(
-  inputDataPtr: usize,   // Pointer to the input data
-  inputDataLength: u32,  // Length of the input data
-  outputHashPtr: usize   // Pointer to the output buffer (32 bytes)
-): void;
-
-// @ts-ignore
-@external("fluentbase_v1preview", "_exit")
-declare function _exit(exitCode: i32): void;
-
-// @ts-ignore
-@external("fluentbase_v1preview", "_write")
-declare function _writeOutput(
-  sourcePtr: usize,      // Pointer to the source data (string)
-  sourceLength: u32      // Length of the source data
-): void;
-
-function _abort(messagePtr: usize, fileNamePtr: usize, line: u32, column: u32): void {
-  let i = 0;
-  while (true) {
-    let unit = load<u16>(messagePtr + i * 2); // Load 16-bit (UTF-16) character from memory
-    if (unit == 0) {
-      break;
+function decodeNullTerminatedString(ptr: usize): string {
+    let i = 0;
+    while (true) {
+        let unit = load<u16>(ptr + i * 2); // Load 16-bit (UTF-16) character from memory
+        if (unit == 0) {
+            break;
+        }
+        i++;
     }
-    i++;
-  }
-  let message = String.UTF16.decodeUnsafe(messagePtr, i * 2);
-  const buffer = Uint8Array.wrap(String.UTF8.encode(message, false));
-  _writeOutput(buffer.dataStart, buffer.byteLength)
-  _exit(-71);
+    return String.UTF16.decodeUnsafe(ptr, i * 2);
 }
 
-class ExecResult {
-  exitCode!: i32;
-  gasUsed!: i32;
+export function abort(messagePtr: usize, fileNamePtr: usize, line: u32, column: u32): void {
+    const message = decodeNullTerminatedString(messagePtr);
+    const buffer = Uint8Array.wrap(String.UTF16.encode(message));
+    writeOutput(buffer);
+    exit(-71);
+}
+
+export function trace(messagePtr: usize, n: i32, a0?: f64, a1?: f64, a2?: f64, a3?: f64, a4?: f64): void {
+    let message = decodeNullTerminatedString(messagePtr);
+    const args = [a0, a1, a2, a3, a4];
+    let joinedArgs = ""
+    for (let i = 0; i < n; i++) {
+        joinedArgs += args[i]!.toString();
+        if (i != n - 1) {
+            joinedArgs += " ";
+        }
+    }
+    message += " " + joinedArgs;
+    const buffer = Uint8Array.wrap(String.UTF16.encode(message));
+    writeOutput(buffer);
+}
+
+export function seed(): f64 {
+    const context = getContext();
+    return context.block.number as f64;
 }
