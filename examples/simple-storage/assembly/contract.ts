@@ -1,5 +1,4 @@
-import { readStorage, readInput, writeOutput, writeStorage } from "../src/index"
-
+import { readStorage, readInput, writeOutput, writeStorage } from "@fluent.xyz/assembly-script-sdk/assembly"
 
 export function main(): void {
     const slot = new Uint8Array(32); // slot 0
