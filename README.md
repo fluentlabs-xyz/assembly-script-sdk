@@ -2,16 +2,6 @@
 
 The **AssemblyScript SDK** is a toolkit for building smart contracts in AssemblyScript on the Fluent blockchain.
 
----
-
-### Usage
-
-```bash
-nvm use 23 # use Node.js v23.6.0 (npm v11.0.0)
-npm install
-npx compile examples/simple-storage.ts -o lib.wasm -t lib.wat # arguments are passed to the AssemblyScript compiler
-```
-
 ### Missing Features
 
 1. No named value storage or Solidity-like mappings.
