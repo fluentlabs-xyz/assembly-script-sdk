@@ -15,6 +15,7 @@ The **AssemblyScript SDK** is a toolkit for building smart contracts in Assembly
 2. Contracts without initialized memory (memory $0 0 in .wat) may not execute correctly
 3. Randomness generated using the `seed` function is insecure and predictable, as it relies on the block number.
 
+---
 
 ### How to Build an Example
 
