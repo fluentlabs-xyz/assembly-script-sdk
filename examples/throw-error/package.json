@@ -1,0 +1,8 @@
+{
+    "name": "assembly-script-sdk-example",
+    "version": "0.1.0",
+    "type": "module",
+    "dependencies": {
+        "@fluent.xyz/assembly-script-sdk": "file:../.."
+    }
+}

@@ -14,6 +14,19 @@ async function deployContract(signer, bytecode) {
     return receipt.contractAddress;
 }
 
+function buildExample(examplePath) {
+    execSync(`make -C ${examplePath}`)
+    const bytecode = readFileSync(`${examplePath}/lib.wasm`, null);
+    return bytecode;
+}
+
+function encodeToUtf16Hex(str) {
+    const utf16Array = Array.from(str).map(char => char.charCodeAt(0));
+    const hexString = utf16Array.map(codeUnit => codeUnit.toString(16).padStart(4, '0')).join('');
+    return hexString;
+}
+
+
 describe('e2e tests', function () {
     let provider;
     let signer;
@@ -27,8 +40,7 @@ describe('e2e tests', function () {
     });
 
     it('simple storage returns the value that was sent to it', async function () {
-        execSync("make -C examples/simple-storage")
-        const bytecode = readFileSync("examples/simple-storage/lib.wasm", null);
+        const bytecode = buildExample("examples/simple-storage")
         const contractAddress = await deployContract(signer, bytecode);
         const inputData = "0xff00aa0000000000000000000000000000000000000000000000000000000000";
         const tx = await signer.sendTransaction({
@@ -48,8 +60,7 @@ describe('e2e tests', function () {
     });
 
     it('who-am-i correctly returns caller', async function () {
-        execSync("make -C examples/who-am-i")
-        const bytecode = readFileSync("examples/who-am-i/lib.wasm", null);
+        const bytecode = buildExample("examples/who-am-i")
         const contractAddress = await deployContract(signer, bytecode);
         const result = await provider.call({
             from: signer.address,
@@ -60,6 +71,24 @@ describe('e2e tests', function () {
         expect(decodedResult).to.equal(signer.address.toLowerCase());
     });
 
+    it('throw error actually throws an error', async function () {
+        const bytecode = buildExample("examples/throw-error")
+        const contractAddress = await deployContract(signer, bytecode);
+        let catched = false;
+        try {
+            const result = await provider.call({
+                from: signer.address,
+                to: contractAddress,
+                data: "",
+            });
 
-
+        } catch (error) {
+            catched = true;
+            const errorText = Buffer.from(error.data.slice(2), 'hex').toString();
+            console.log(errorText);
+            const expected = encodeToUtf16Hex("this is an error!");
+            expect(error.data).to.contain(expected);
+        }
+        expect(catched).to.equal(true);
+    });
 });
