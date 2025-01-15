@@ -109,6 +109,9 @@ export function trace(messagePtr: usize, n: i32, a0?: f64, a1?: f64, a2?: f64, a
     writeOutput(buffer);
 }
 
+/**
+ * WARNING: This implementation is predictable and insecure as it relies solely on the block number.
+ */
 export function seed(): f64 {
     const context = getContext();
     return context.block.number as f64;

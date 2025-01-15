@@ -17,8 +17,10 @@ npx compile examples/simple-storage.ts -o lib.wasm -t lib.wat # arguments are pa
 1. No named value storage or Solidity-like mappings.
 2. Contracts have a single `main` function that must manually parse transaction inputs.
 3. Ethereum primitives (`Address`, `U256`, etc.) are not supported; use `Uint8Array` instead.
+4. Event emission is not yet implemented.
 
 ### Known Issues
 
 1. SDK import is mandatory for all contracts to resolve abort, trace, and seed functions.
 2. Contracts without initialized memory (memory $0 0 in .wat) may not execute correctly
+3. Randomness generated using the `seed` function is insecure and predictable, as it relies on the block number.

@@ -56,7 +56,7 @@ class ContextParser {
         return value;
     }
 
-    readUint8Array(length: i32): Uint8Array {
+    readFixedArray(length: i32): Uint8Array {
         const array = this.buffer.subarray(this.offset as i32, this.offset as i32 + length);
         this.offset += length;
         return array;
@@ -75,29 +75,29 @@ export function getContext(): Context {
     const parser = new ContextParser(buffer);
     const block = new BlockContext(
         parser.readU64(),               // chainId
-        parser.readUint8Array(20),      // coinbase (Address, 20 bytes)
+        parser.readFixedArray(20),      // coinbase (Address, 20 bytes)
         parser.readU64(),               // timestamp
         parser.readU64(),               // number
-        parser.readUint8Array(32),      // difficulty (U256, 32 bytes)
-        parser.readUint8Array(32),      // prevRandao (B256, 32 bytes)
+        parser.readFixedArray(32),      // difficulty (U256, 32 bytes)
+        parser.readFixedArray(32),      // prevRandao (B256, 32 bytes)
         parser.readU64(),               // gasLimit
-        parser.readUint8Array(32)       // baseFee (U256, 32 bytes)
+        parser.readFixedArray(32)       // baseFee (U256, 32 bytes)
     );
     const tx = new TxContext(
         parser.readU64(),               // gasLimit
         parser.readU64(),               // nonce
-        parser.readUint8Array(32),      // gasPrice (U256, 32 bytes)
-        parser.readUint8Array(36),      // gasPriorityFee (Option<U256>, 36 bytes)
-        parser.readUint8Array(20),      // origin (Address, 20 bytes)
-        parser.readUint8Array(32)       // value (U256, 32 bytes)
+        parser.readFixedArray(32),      // gasPrice (U256, 32 bytes)
+        parser.readFixedArray(36),      // gasPriorityFee (Option<U256>, 36 bytes)
+        parser.readFixedArray(20),      // origin (Address, 20 bytes)
+        parser.readFixedArray(32)       // value (U256, 32 bytes)
     );
     tx.gasPriorityFee = tx.gasPriorityFee.subarray(4); // TODO: make the field optional
     const contract = new ContractContext(
-        parser.readUint8Array(20),      // address (Address, 20 bytes)
-        parser.readUint8Array(20),      // bytecodeAddress (Address, 20 bytes)
-        parser.readUint8Array(20),      // caller (Address, 20 bytes)
+        parser.readFixedArray(20),      // address (Address, 20 bytes)
+        parser.readFixedArray(20),      // bytecodeAddress (Address, 20 bytes)
+        parser.readFixedArray(20),      // caller (Address, 20 bytes)
         parser.readBool(),              // isStatic (bool, 4 bytes)
-        parser.readUint8Array(32)       // value (U256, 32 bytes)
+        parser.readFixedArray(32)       // value (U256, 32 bytes)
     );
     return new Context(block, tx, contract);
 }
