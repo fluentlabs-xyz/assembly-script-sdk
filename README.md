@@ -14,3 +14,20 @@ The **AssemblyScript SDK** is a toolkit for building smart contracts in Assembly
 1. SDK import is mandatory for all contracts to resolve abort, trace, and seed functions.
 2. Contracts without initialized memory (memory $0 0 in .wat) may not execute correctly
 3. Randomness generated using the `seed` function is insecure and predictable, as it relies on the block number.
+
+
+### How to Build an Example
+
+1. Navigate to the example directory:
+
+```bash
+cd examples/<example_name>
+```
+
+2. Install dependencies and build the smart contract:
+
+```bash
+make
+```
+
+3. Deploy the generated `lib.wasm` file to the Fluent blockchain using your preferred deployment tool or method.
