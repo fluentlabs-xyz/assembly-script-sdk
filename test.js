@@ -26,6 +26,11 @@ function encodeToUtf16Hex(str) {
     return hexString;
 }
 
+function decodeUtf16(bytes) {
+    const decoder = new TextDecoder("utf-16");
+    return decoder.decode(new Uint8Array(bytes));
+}
+
 
 describe('e2e tests', function () {
     let provider;
@@ -84,10 +89,8 @@ describe('e2e tests', function () {
 
         } catch (error) {
             catched = true;
-            const errorText = Buffer.from(error.data.slice(2), 'hex').toString();
-            console.log(errorText);
-            const expected = encodeToUtf16Hex("this is an error!");
-            expect(error.data).to.contain(expected);
+            const errorText = decodeUtf16(Buffer.from(error.data.slice(2), 'hex'));
+            expect(errorText).to.contain("this is an error!");
         }
         expect(catched).to.equal(true);
     });
