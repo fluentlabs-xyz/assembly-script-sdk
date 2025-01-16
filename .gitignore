@@ -2,3 +2,5 @@ node_modules/
 build
 lib.wasm
 lib.wat
+.idea
+.DS_Store
