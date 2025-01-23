@@ -5,15 +5,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "assemblyscript": "^0.27.31"
+    "assemblyscript": "^0.27.31",
+    "hardhat": "^2.22.18",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0"
   },
   "type": "module",
   "bin": {
     "compile": "./cli/index.js"
-  },
-  "dependencies": {
-    "chai": "^5.1.2",
-    "ethers": "^6.13.5",
-    "mocha": "^11.0.1"
   }
 }

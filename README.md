@@ -76,6 +76,7 @@ This section describes all available methods in the **AssemblyScript SDK**, a to
   - `input`: Input data as a `Uint8Array`.
   - `gasLimit`: Maximum gas allowed for the execution.
   - `state`: State context identifier.
+
   Returns an `ExecResult` object that contains:
   - `gasUsed`: The amount of gas consumed during execution.
   - `exitCode`: The exit code of the execution.
@@ -95,6 +96,7 @@ This section describes all available methods in the **AssemblyScript SDK**, a to
   - `fileNamePtr`: Pointer to the file name.
   - `line`: Line number.
   - `column`: Column number.
+
   Instead of calling this function directly, you can use the TypeScript syntax:
   ```typescript
   throw new Error("this is an error!");
