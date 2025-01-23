@@ -140,8 +140,18 @@ make
 3. Deploy the generated `lib.wasm` file to the Fluent blockchain using your preferred deployment tool or method.
 
 
-## How to Run E2E Tests
+## Testing
 
-1. **Start Local Node:** Launch a local Fluent blockchain node to simulate the blockchain environment.
+To run tests, use the following commands:
 
-2. **Run Tests:** Execute `npx mocha`. This will compile and deploy smart contracts from the `examples/` directory to the blockchain, verifying they behave as expected.
+- For testing against a local fluent node:
+
+  ```bash
+  npx hardhat test --local
+  ```
+
+- To skip tests requiring Fluent features:
+
+  ```bash
+  npx hardhat test
+  ```
