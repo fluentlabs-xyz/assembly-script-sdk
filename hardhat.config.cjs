@@ -1,6 +1,7 @@
-import '@nomicfoundation/hardhat-toolbox';
+require("@nomicfoundation/hardhat-toolbox");
 
-const config = {
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
   defaultNetwork: 'hardhat',
   networks: {
     local: {
@@ -13,5 +14,3 @@ const config = {
     },
   },
 };
-
-export default config;
