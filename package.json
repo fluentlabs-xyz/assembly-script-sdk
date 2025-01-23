@@ -1,5 +1,5 @@
 {
-  "name": "assembly-script-sdk",
+  "name": "@fluent.xyz/assembly-script-sdk",
   "version": "0.0.1",
   "description": "An SDK for developing smart contracts on the Fluent blockchain, written in AssemblyScript",
   "author": "",
